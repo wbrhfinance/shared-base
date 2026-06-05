@@ -2,9 +2,9 @@
 
 **Purpose.** Cross-firm personal layer. Loaded alongside any toolbox (`cape-toolbox`, `brh-toolbox`) to give Claude William's positioning, career, languages, and current allocation. Firm-specific context (brand, voice, mandate, team, typography) lives in each toolbox and is *not* duplicated here.
 
-**Canonical path.** `C:\Users\willi\Code\shared-base\00-shared-base.md` (referenced by `cape-toolbox/CLAUDE.md` and `brh-toolbox/CLAUDE.md`). Lives in its own private repo `wbrhfinance/shared-base`.
+**Canonical path.** `C:\Code\shared-base\00-shared-base.md` (referenced by `cape-toolbox/CLAUDE.md` and `brh-toolbox/CLAUDE.md`). Lives in its own private repo `wbrhfinance/shared-base`.
 
-Last updated: 2026-05-16. v2.
+Last updated: 2026-06-05. v2.1.
 
 ---
 
@@ -66,6 +66,20 @@ Risch-Rotkreuz, canton Zug, Switzerland.
 - The Cape and BRH toolboxes are already structured (skills, agents, runbooks, MCPs, assets). See `cape-toolbox/CLAUDE.md` and `brh-toolbox/CLAUDE.md` for the architecture.
 
 Direction of travel: PowerPoint → web-based presentations; Excel dashboards → web-based dashboards; one-off prompts → composable skills.
+
+---
+
+## Workspace and scratchpad
+
+`C:\Code` is the canonical workspace root on every machine. On any machine where the physical tree is at `C:\Users\willi\Code`, a directory junction makes both paths resolve to the same files:
+
+```
+mklink /J C:\Code C:\Users\willi\Code
+```
+
+**Reading order.** Before answering anything substantive, Claude reads this file (`C:\Code\shared-base\00-shared-base.md`). For Cape tasks, also read `C:\Code\cape\cape-toolbox\CLAUDE.md`. For BRH tasks, also read `C:\Code\brh\brh-toolbox\CLAUDE.md`.
+
+**Scratchpad rule.** The Cowork session directory (`AppData\Roaming\Claude\local-agent-mode-sessions\…`) is ephemeral — cleared between sessions. Never leave a deliverable there. Every final file must be written to its `C:\Code` destination, and the final reply must state the full `C:\Code` path.
 
 ---
 
