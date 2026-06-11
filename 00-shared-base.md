@@ -4,7 +4,7 @@
 
 **Canonical path.** `C:\Code\shared-base\00-shared-base.md` (referenced by `cape-toolbox/CLAUDE.md` and `brh-toolbox/CLAUDE.md`). Lives in its own private repo `wbrhfinance/shared-base`.
 
-Last updated: 2026-06-05. v2.1.
+Last updated: 2026-06-11. v2.2.
 
 ---
 
@@ -87,6 +87,34 @@ mklink /J C:\Code C:\Users\willi\Code
 
 - **Cape Capital** — see `cape-toolbox/CLAUDE.md`. Includes brand, voice, source hierarchy, personas (CIO, IC, macro, equity, compliance, client-advisor), mandate exclusions, Moonshots framework, skills, agents, runbooks. The Moonshots research source data lives in OneDrive: `Cape Capital/Moonshots/` (universe construction, GICS, narrative, prompts).
 - **B-R & H Finance** — see `brh-toolbox/CLAUDE.md`. Includes firm history, Jonathan-led portfolio philosophy, voice (FR-first), Les 4 Saisons newsletter system, market data workflow, typography (Swiss apostrophe), website design system.
+
+---
+
+## Repository and folder map (canonical, both machines)
+
+All code and persistent AI assets live in `C:\Code`, synced through GitHub. Nothing else syncs code.
+
+| Path | Repo | Purpose |
+|---|---|---|
+| `C:\Code\shared-base\` | `wbrhfinance/shared-base` (private) | Core profile, cross-firm skills (`enhance-last-skill`, `dual-engine-research`, `security-auditor`), docs (`new-pc-setup-runbook`). |
+| `C:\Code\cape\cape-toolbox\` | `CapeCapitalDev/Cape-Toolbox` | Cape skills, agents, runbooks, MCPs, assets. Entry point `CLAUDE.md`. |
+| `C:\Code\cape\Gauges\` | `CapeCapitalDev/Gauges` | Midterms gauges webapp. Active feature branches. |
+| `C:\Code\cape\Moonshot\` | `CapeCapitalDev/Moonshot` | Moonshots web build. |
+| `C:\Code\cape\cape_blank\` | `CapeCapitalDev/cape_blank` | Starter template. |
+| `C:\Code\cape\Cape_Iran_V3\` | local working copy | Iran dashboard. Moved from OneDrive 2026-06-11. Pending GitHub consolidation (rename Cape_Iran_V2 to cape-iran). |
+| `C:\Code\brh\brh-toolbox\` | `wbrhfinance/brh-toolbox` | BRH skills, newsletter system. Entry point `CLAUDE.md`. |
+| `C:\Code\brh\wbr-market-dashboard\` | `wbrhfinance/wbr-market-dashboard` | Market monitoring dashboard. |
+| `C:\Code\brh\brh-finance-website\` | `wbrhfinance/brh-finance-website` | BRH website. |
+| `C:\Code\brh\brh-finance-february\` | `wbrhfinance/brh-finance-february` | BRH website iteration. |
+| `C:\Code\bin\` | not a repo | Local scripts: `daily-pull.ps1` (scheduled 08:00 pull), `sync-status.ps1` (dirty/unpushed report). |
+
+OneDrive (`william@brhfinance.com`, `Business\`) holds **data, never code**:
+
+- `Cape Capital\` — research source data (Moonshots universe, GICS, themes, misc documents, Perplexity research, audio, prompts). Canonical for source data.
+- `William Documents\` — personal, non-business material (Golf, personal skills).
+- `Business\AI\` — **deleted 2026-06-11**. Contents dispersed: code to `C:\Code`, Cape data to `Cape Capital\`, personal to `William Documents\`. Do not recreate.
+
+**Sync rule.** GitHub is the only cross-machine channel for `C:\Code`. `daily-pull.ps1` pulls each morning but skips dirty repos; pushing is a deliberate end-of-session act. Run `sync-status.ps1` to see dirty or unpushed repos at a glance.
 
 ---
 

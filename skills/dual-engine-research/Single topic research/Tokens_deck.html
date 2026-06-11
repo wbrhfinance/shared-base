@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tokens at CAPE — Internal briefing</title>
+<style>
+:root {
+  --bg: #FFFFFF;
+  --ink: #1A1612;
+  --ink-soft: #4A453E;
+  --meta: #8A8378;
+  --accent: #5C1F2B;
+  --accent-2: #B6463A;
+  --rule: #E5E0D6;
+  --rule-soft: #F0EBE0;
+  --highlight: #FFF8EC;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: #F5F2EC;
+  font-family: var(--sans);
+  overflow: hidden;
+  user-select: none;
+  color: var(--ink);
+}
+
+.deck {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide {
+  position: absolute;
+  width: min(1280px, 95vw);
+  height: min(720px, 95vh);
+  aspect-ratio: 16 / 9;
+  display: none;
+  flex-direction: column;
+  padding: 56px 72px 56px;
+  background: var(--bg);
+  color: var(--ink);
+  border-radius: 4px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  font-family: var(--sans);
+  overflow: hidden;
+}
+.slide.active { display: flex; }
+
+.top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent);
+}
+
+.tag {
+  font-family: var(--sans);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--meta);
+  margin-bottom: 18px;
+  font-weight: 500;
+}
+
+h1.cover {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 72px;
+  line-height: 1.0;
+  letter-spacing: -0.015em;
+  color: var(--accent);
+  margin-top: 60px;
+}
+h1.cover .sub {
+  display: block;
+  font-size: 22px;
+  font-family: var(--sans);
+  font-weight: 400;
+  color: var(--ink);
+  margin-top: 32px;
+  letter-spacing: 0;
+  line-height: 1.45;
+  max-width: 820px;
+}
+
+h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  max-width: 1000px;
+  margin-bottom: 18px;
+}
+h2 .em { color: var(--accent); font-style: italic; }
+h2 .strong { font-weight: 600; }
+
+h3 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: -0.005em;
+}
+
+p, li {
+  font-size: 16px;
+  line-height: 1.55;
+  font-family: var(--sans);
+  color: var(--ink);
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.kicker {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--ink-soft);
+  margin-top: 18px;
+  max-width: 880px;
+  line-height: 1.5;
+}
+
+.cols-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 14px;
+}
+
+.cols-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 30px;
+  margin-top: 14px;
+}
+
+.cols-4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 24px;
+  margin-top: 14px;
+}
+
+.panel {
+  border-top: 1px solid var(--rule);
+  padding-top: 14px;
+}
+
+.panel-h {
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.panel p { font-size: 15px; line-height: 1.5; }
+.panel li { font-size: 15px; line-height: 1.5; }
+
+.note {
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin-top: auto;
+  max-width: 880px;
+}
+
+.cite {
+  position: absolute;
+  bottom: 22px;
+  left: 72px;
+  right: 72px;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--meta);
+  display: flex;
+  justify-content: space-between;
+}
+
+.cite .sources { max-width: 850px; }
+
+.bignum {
+  font-family: var(--serif);
+  font-size: 180px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  font-weight: 400;
+  color: var(--accent);
+}
+.bignum .pct {
+  font-size: 76px;
+  vertical-align: super;
+  line-height: 1;
+  opacity: 0.85;
+  margin-left: 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+  margin-top: 12px;
+}
+th {
+  text-align: left;
+  font-weight: 600;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 10px 14px 10px 0;
+  border-bottom: 1.5px solid var(--accent);
+}
+td {
+  padding: 11px 14px 11px 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink);
+  vertical-align: top;
+  line-height: 1.45;
+}
+td.num {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--accent);
+  width: 32px;
+}
+td.tech { font-weight: 600; width: 38%; }
+td.impact { color: var(--ink-soft); }
+td.right { text-align: right; }
+
+.bullets {
+  list-style: none;
+  margin-top: 10px;
+}
+.bullets li {
+  padding: 11px 0;
+  border-top: 1px solid var(--rule);
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+.bullets li:first-child { border-top: none; padding-top: 4px; }
+.bullets li strong { font-weight: 600; }
+.bullets li .sub {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.variable {
+  border: 1px solid var(--rule);
+  padding: 18px;
+  border-radius: 2px;
+}
+.variable .v-num {
+  font-family: var(--serif);
+  font-size: 36px;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.variable h4 {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+.variable p { font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+
+.stat-block {
+  border-top: 1px solid var(--rule);
+  padding-top: 14px;
+}
+.stat-num {
+  font-family: var(--serif);
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 400;
+  color: var(--accent);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.stat-label {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+
+.bracket {
+  border-left: 3px solid var(--accent);
+  padding-left: 18px;
+  margin: 16px 0 6px;
+  background: var(--rule-soft);
+  padding: 14px 18px;
+}
+.bracket p { font-size: 14.5px; line-height: 1.5; }
+
+.slide-num {
+  position: absolute;
+  bottom: 22px;
+  right: 72px;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--meta);
+}
+
+.nav {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  font-size: 12px;
+  color: #6B665E;
+  font-family: var(--sans);
+  z-index: 50;
+}
+.nav button {
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.15);
+  color: #1A1612;
+  font-family: var(--sans);
+  font-size: 12px;
+  padding: 5px 13px;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+}
+.nav button:hover { background: var(--bg); }
+.counter { letter-spacing: 0.1em; }
+
+.split-flex {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  flex: 1;
+  align-items: start;
+  margin-top: 14px;
+}
+
+.panel-box {
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 20px;
+  height: 100%;
+}
+.panel-box h3 {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.panel-box .panel-tag {
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.population-card {
+  border-left: 4px solid var(--accent);
+  padding: 16px 22px;
+  background: var(--rule-soft);
+  margin-bottom: 0;
+}
+.population-card .pop-tag {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.population-card h4 {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+.population-card p { font-size: 14px; line-height: 1.5; }
+.population-card ul { margin-top: 8px; padding-left: 16px; }
+.population-card li { font-size: 13.5px; line-height: 1.5; padding: 2px 0; }
+
+.path-card {
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 18px 22px;
+}
+.path-card.up { border-color: var(--accent); border-width: 1.5px; }
+.path-card .path-tag {
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--meta);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.path-card.up .path-tag { color: var(--accent); }
+.path-card h4 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+.path-card.up h4 { color: var(--accent); }
+.path-card p { font-size: 14px; line-height: 1.5; }
+.path-card ul { margin-top: 8px; padding-left: 18px; }
+.path-card li { font-size: 13.5px; line-height: 1.5; padding: 3px 0; }
+
+.tier-row {
+  display: grid;
+  grid-template-columns: 1fr 2.5fr;
+  gap: 24px;
+  align-items: start;
+  padding: 16px 0;
+  border-top: 1px solid var(--rule);
+}
+.tier-row:last-child { border-bottom: 1px solid var(--rule); }
+.tier-name {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--accent);
+  line-height: 1.1;
+}
+.tier-name .tier-mult {
+  display: block;
+  font-size: 12px;
+  font-family: var(--sans);
+  color: var(--meta);
+  font-style: normal;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+.tier-desc { font-size: 14.5px; line-height: 1.55; }
+
+.callout-box {
+  background: var(--accent);
+  color: #FFFFFF;
+  padding: 22px 26px;
+  border-radius: 3px;
+  margin-top: 16px;
+}
+.callout-box p {
+  color: #FFFFFF;
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.35;
+  font-style: italic;
+  max-width: 920px;
+}
+
+.audience-pill {
+  display: inline-block;
+  background: var(--rule-soft);
+  color: var(--accent);
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+<!-- SLIDE 1: TITLE -->
+<section class="slide active">
+  <div class="top-bar"></div>
+  <div class="tag">CAPE Capital · Internal briefing · 27 May 2026</div>
+  <div class="body">
+    <h1 class="cover">Tokens at CAPE.
+      <span class="sub">How we are using LLMs, what it actually costs us, and how to use the tools in a cost-optimised way.</span>
+    </h1>
+  </div>
+  <div class="cite">
+    <span>William Bowdler-Raynar</span>
+    <span class="slide-num">1 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 2: WHAT IS A TOKEN -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="tag">The starting point</div>
+  <h2>A token is the unit an LLM bills for. Not a word, not a character.</h2>
+  <div class="split-flex">
+    <div>
+      <h3>The mechanics</h3>
+      <p>Modern LLMs break text into recurring subword fragments using byte-pair encoding. The model bills each fragment it processes.</p>
+      <ul class="bullets" style="margin-top:14px;">
+        <li><strong>1 token ≈ 4 English characters ≈ 0.75 words.</strong> 100 words is roughly 130 tokens.</li>
+        <li><strong>Input tokens</strong> are what the model reads: prompt, files, prior chat history.</li>
+        <li><strong>Output tokens</strong> are what the model generates back.</li>
+        <li><strong>Output costs 2 to 8 times input</strong> across providers. Median ratio 4 to 5 times.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>The wrinkle: vendors count differently</h3>
+      <p>The same English text gets a different token count depending on the tokenizer used. The tokenizer is part of the product, not neutral infrastructure.</p>
+      <div class="bracket" style="margin-top:14px;">
+        <p><strong>Anthropic shipped Claude Opus 4.7 with a tokenizer that encodes up to 35% more tokens for the same English text than its predecessor.</strong> An effective price hike with no list-price change.</p>
+      </div>
+      <p style="margin-top:14px; font-size:14px; color:var(--ink-soft);">Practical consequence: you cannot compare vendors purely on dollars-per-token. The same task costs different absolute amounts to run.</p>
+    </div>
+  </div>
+  <div class="cite">
+    <span class="sources">OpenAI tokeniser docs · Anthropic Opus 4.7 model card · Mistral tokeniser docs</span>
+    <span class="slide-num">2 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 3: TWO COST DIMENSIONS -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="tag">Two cost dimensions before you write a single word</div>
+  <h2>Cost compounds two ways: <span class="em">which language</span> you write in, and <span class="em">which provider</span> you use.</h2>
+  <div class="split-flex">
+    <div>
+      <div class="panel-tag" style="font-size:10.5px; letter-spacing:0.22em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:8px;">Language · tokens per word</div>
+      <table>
+        <thead>
+          <tr><th>Language</th><th>Ratio</th><th>Intuition</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>English</strong></td><td class="num" style="font-size:16px;">~1.3</td><td class="impact">Cheapest baseline</td></tr>
+          <tr><td><strong>Spanish</strong></td><td class="num" style="font-size:16px;">~1.5</td><td class="impact">Slightly above English</td></tr>
+          <tr><td><strong>French</strong></td><td class="num" style="font-size:16px;">~2.0</td><td class="impact">Materially more expensive</td></tr>
+          <tr><td><strong>German</strong></td><td class="num" style="font-size:16px;">~2.1</td><td class="impact">Often just above French</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:14px; font-size:13.5px; color:var(--ink-soft); font-style:italic;">A French memo costs roughly 50% more tokens than the same English memo, before model choice is considered.</p>
+    </div>
+    <div>
+      <div class="panel-tag" style="font-size:10.5px; letter-spacing:0.22em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:8px;">Provider · USD per million tokens · flagship API</div>
+      <table>
+        <thead>
+          <tr><th>Provider</th><th class="right">Input</th><th class="right">Output</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Mistral Large 3 (EU)</strong></td><td class="right">$0.50</td><td class="right">$1.50</td></tr>
+          <tr><td><strong>Google Gemini 3.1 Pro (US)</strong></td><td class="right">$2.00</td><td class="right">$12.00</td></tr>
+          <tr><td><strong>Anthropic Sonnet 4.6 (US)</strong></td><td class="right">$3.00</td><td class="right">$15.00</td></tr>
+          <tr><td><strong>OpenAI GPT-5.5 (US)</strong></td><td class="right">$5.00</td><td class="right">$30.00</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:14px; font-size:13.5px; color:var(--ink-soft); font-style:italic;">Mistral is 6 to 20× cheaper on input than US frontier models, with a real capability gap on the hardest reasoning tasks. EU sovereignty adds value separate from price.</p>
+    </div>
+  </div>
+  <div class="cite">
+    <span class="sources">Vendor pricing pages (May 2026) · Anthropic tokeniser docs · Mistral pricing</span>
+    <span class="slide-num">3 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 4: WHERE PRICING IS HEADING -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="tag">Where the LLM pricing industry is heading · 12-month forward look</div>
+  <h2>The market is splitting in two. <span class="em">Frontier prices have started rising</span>.</h2>
+  <div class="cols-2" style="margin-top:14px;">
+    <div class="path-card">
+      <div class="path-tag">Path 1 · Commodity tier</div>
+      <h4>Still deflating</h4>
+      <ul>
+        <li>DeepSeek V4-Flash cache hits at $0.0029 per million input tokens</li>
+        <li>Open-weight hosting on Groq, Together below $0.10 per million</li>
+        <li>Smaller, faster models hitting "good enough" on routine tasks</li>
+        <li>The cheap end of the market keeps getting cheaper</li>
+      </ul>
+    </div>
+    <div class="path-card up">
+      <div class="path-tag">Path 2 · Frontier tier</div>
+      <h4>Inflected upward in April 2026</h4>
+      <ul>
+        <li><strong>GPT-5.5</strong> launched at roughly <strong>2× GPT-5.4</strong> pricing</li>
+        <li><strong>Gemini 3.1 Pro</strong> materially more expensive than 2.5 Pro</li>
+        <li><strong>Claude Opus 4.7</strong> tokenizer uses up to 35% more tokens per text</li>
+        <li>First sharp frontier price rise since GPT-4 launched</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout-box">
+    <p>Providers have been pricing below long-run economics to win share. IPO pressure and profitability expectations are rising. Frontier-tier pricing is more likely to move up than down over the next 12 months.</p>
+  </div>
+  <div class="cite">
+    <span class="sources">OpenAI / Anthropic / Google / DeepSeek pricing pages · IPO-pressure thesis (consensus across MindStudio, SaaStr, Moov AI May 2026)</span>
+    <span class="slide-num">4 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 5: FOUR COST VARIABLES -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="tag">A working decision framework</div>
+  <h2>Four variables determine what any LLM call costs.</h2>
+  <p style="font-size:15px; color:var(--ink-soft); max-width:900px; margin-bottom:8px;">Before reaching for a rate card, hold these four in mind. Each one moves the bill independently. Stack them badly and a routine task can cost 50 to 100 times its floor.</p>
+  <div class="cols-4" style="margin-top:18px;">
+    <div class="variable">
+      <div class="v-num">1</div>
+      <h4>Language</h4>
+      <p>English is the cheapest baseline. French and German typically cost 50-60% more tokens for the same content.</p>
+    </div>
+    <div class="variable">
+      <div class="v-num">2</div>
+      <h4>Model</h4>
+      <p>Haiku < Sonnet < Opus on cost and depth. The price spread between tiers is 5× on input.</p>
+    </div>
+    <div class="variable">
+      <div class="v-num">3</div>
+      <h4>Workflow</h4>
+      <p>Chat < research < deep research / agentic. Each tier multiplies token consumption by 5-10×.</p>
+    </div>
+    <div class="variable">
+      <div class="v-num">4</div>
+      <h4>History &amp; output length</h4>
+      <p>Long chats and long answers are hidden cost multipliers. Output costs 4-6× input.</p>
+    </div>
+  </div>
+  <p class="kicker">The next slides break each axis down. Same question, different combinations: 50-100× difference in what we pay.</p>
+  <div class="cite">
+    <span class="sources">Synthesised from vendor docs, Anthropic context-window guidance, agentic-workflow research (Arxiv 2605.09104)</span>
+    <span class="slide-num">5 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 6: TWO POPULATIONS -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="tag">Best practice playbooks · by user type</div>
+  <h2>CAPE has two user populations. Each needs a different cost discipline.</h2>
+  <div class="cols-2" style="margin-top:20px;">
+    <div class="population-card">
+      <div class="pop-tag">Population A · Web-based</div>
+      <h4>Subscription users on Claude.ai, ChatGPT, Perplexity</h4>
+      <p>On a flat monthly fee with rate-limited usage windows. For security reasons, CAPE restricts desktop-app access to specific employees today.</p>
+      <ul>
+        <li><strong>Goal:</strong> maximise useful work per session window</li>
+        <li><strong>Cost lever:</strong> rate-limit headroom, not dollar savings</li>
+        <li><strong>The win:</strong> more productivity per subscription</li>
+      </ul>
+    </div>
+    <div class="population-card">
+      <div class="pop-tag">Population B · Full-suite / pay-as-you-go</div>
+      <h4>API users, Claude Code, Cursor, MCP integrations, automated pipelines</h4>
+      <p>Effectively uncapped usage. Per-token metering applies directly. This is where the bill actually accumulates and where governance matters.</p>
+      <ul>
+        <li><strong>Goal:</strong> cost per unit of useful work</li>
+        <li><strong>Cost lever:</strong> real dollar savings via architecture and routing</li>
+        <li><strong>The risk:</strong> blind sign-off on "unlimited" usage</li>
+      </ul>
+    </div>
+  </div>
+  <p class="kicker">The next two slides give each population its own ranked playbook. Same problem, different rules.</p>
+  <div class="cite">
+    <span class="sources">CAPE internal access policy · Perplexity research summary (May 2026)</span>
+    <span class="slide-num">6 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 7: POPULATION A PLAYBOOK -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="audience-pill">Population A · Web-based subscription users</div>
+  <h2>Extend your subscription. Do not waste it.</h2>
+  <p style="font-size:15px; color:var(--ink-soft); max-width:880px; margin-bottom:14px;">Ranked by impact. The first three require no engineering and can be done today.</p>
+  <table>
+    <thead>
+      <tr><th style="width:36px;">#</th><th>Technique</th><th>Typical impact</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="tech">Edit the original prompt rather than sending follow-up corrections</td><td class="impact">Prevents context bloat; materially extends useful session capacity</td></tr>
+      <tr><td class="num">2</td><td class="tech">Start a fresh chat every 15–20 messages, carry forward only a summary</td><td class="impact">80–90% reduction in cumulative token burden on long sessions</td></tr>
+      <tr><td class="num">3</td><td class="tech">Batch related questions into one prompt</td><td class="impact">30–50% saving on multi-part tasks</td></tr>
+      <tr><td class="num">4</td><td class="tech">Store recurring documents in Projects or persistent workspaces</td><td class="impact">Avoids repeated re-tokenisation of the same source files</td></tr>
+      <tr><td class="num">5</td><td class="tech">Save role and preferences once in Memory / Settings</td><td class="impact">Avoids 3-5 setup messages per new chat</td></tr>
+      <tr><td class="num">6</td><td class="tech">Turn off unused features: search, deep thinking, connectors</td><td class="impact">Cuts unnecessary token generation on every response</td></tr>
+      <tr><td class="num">7</td><td class="tech">Use lower-tier models (Haiku, Flash-Lite) for easy work</td><td class="impact">Extends limits and lowers effective consumption</td></tr>
+    </tbody>
+  </table>
+  <div class="cite">
+    <span class="sources">Anthropic / OpenAI usage docs · Perplexity research summary · YouTube user-tip stack</span>
+    <span class="slide-num">7 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 8: POPULATION B PLAYBOOK -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="audience-pill">Population B · Full-suite / pay-as-you-go users</div>
+  <h2>Treat cost as architecture, not as behaviour.</h2>
+  <p style="font-size:15px; color:var(--ink-soft); max-width:880px; margin-bottom:14px;">Ranked by impact. This is where real dollar savings live. Production teams stacking the top three regularly report 70-85% total spend reductions.</p>
+  <table>
+    <thead>
+      <tr><th style="width:36px;">#</th><th>Technique</th><th>Typical impact</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="tech">Prompt caching on static content</td><td class="impact">41–90% reduction in input-token cost in production</td></tr>
+      <tr><td class="num">2</td><td class="tech">Model routing by task complexity</td><td class="impact">47–80% total spend reduction documented</td></tr>
+      <tr><td class="num">3</td><td class="tech">Batch API for non-real-time work</td><td class="impact">50% discount where supported, near-universal cross-vendor</td></tr>
+      <tr><td class="num">4</td><td class="tech">Compress system prompts and repeated instructions</td><td class="impact">30–70% reduction in prompt overhead</td></tr>
+      <tr><td class="num">5</td><td class="tech">Constrain output: max_tokens and structured outputs</td><td class="impact">40–70% reduction in output cost</td></tr>
+      <tr><td class="num">6</td><td class="tech">Semantic caching and hierarchical memory</td><td class="impact">30–90% savings depending on workflow</td></tr>
+      <tr><td class="num">7</td><td class="tech">Dynamic tool loading and agent-loop audits</td><td class="impact">40–60% spend reduction on agentic workflows</td></tr>
+    </tbody>
+  </table>
+  <div class="cite">
+    <span class="sources">Anthropic / OpenAI caching docs · Mavik Labs LLM cost optimisation 2026 · Arxiv 2601.06007 · Arxiv 2605.09104</span>
+    <span class="slide-num">8 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 9: MODEL IMPACT -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="tag">Variable 2 · Model choice</div>
+  <h2>Match the model to the task. The price spread between tiers is real.</h2>
+  <table style="margin-top:14px;">
+    <thead>
+      <tr><th>Tier</th><th class="right">Input $/M</th><th class="right">Output $/M</th><th>Use for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Claude Haiku 4.5</strong></td>
+        <td class="right">$1</td>
+        <td class="right">$5</td>
+        <td class="impact">Formatting, extraction, translation, quick drafts, classification</td>
+      </tr>
+      <tr>
+        <td><strong>Claude Sonnet 4.6</strong></td>
+        <td class="right">$3</td>
+        <td class="right">$15</td>
+        <td class="impact">Default research workhorse. Most professional work belongs here.</td>
+      </tr>
+      <tr>
+        <td><strong>Claude Opus 4.7</strong></td>
+        <td class="right">$5</td>
+        <td class="right">$25</td>
+        <td class="impact">Premium reasoning. Escalate only when incremental quality is genuinely worth paying for.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="cols-3" style="margin-top:24px;">
+    <div class="stat-block">
+      <div class="stat-num">3×</div>
+      <div class="stat-label">Sonnet input is 3× Haiku. Use Sonnet for serious work, not for grammar checks.</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">5×</div>
+      <div class="stat-label">Opus input is 5× Haiku. Opus is for the hardest reasoning, not for default use.</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">50×</div>
+      <div class="stat-label">Spread from Opus to budget commodity (Gemini Flash-Lite at $0.10 input). The routing prize.</div>
+    </div>
+  </div>
+  <p class="kicker">Default rule: Haiku for operational tasks. Sonnet for most research. Opus only where the incremental reasoning quality is worth paying for.</p>
+  <div class="cite">
+    <span class="sources">Anthropic pricing (May 2026) · Google Gemini pricing</span>
+    <span class="slide-num">9 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 10: WORKFLOW INTENSITY -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="tag">Variable 3 · Workflow intensity</div>
+  <h2>How you ask costs more than what you ask.</h2>
+  <div class="tier-row">
+    <div class="tier-name">Chat
+      <span class="tier-mult">baseline · 1×</span>
+    </div>
+    <div class="tier-desc">One prompt-response cycle. Relatively contained. A few thousand tokens for a typical exchange. This is the cheap end of the spectrum and where most Population A traffic lives.</div>
+  </div>
+  <div class="tier-row">
+    <div class="tier-name">Research
+      <span class="tier-mult">5–10×</span>
+    </div>
+    <div class="tier-desc">Larger context, source material loaded, longer answers, structured analysis. Tens of thousands of tokens per task. Sonnet territory.</div>
+  </div>
+  <div class="tier-row">
+    <div class="tier-name">Deep research<br>/ agentic
+      <span class="tier-mult">up to 20× research</span>
+    </div>
+    <div class="tier-desc">Multiple passes, sub-questions, tool calls, synthesis layers, iterative review. Hundreds of thousands to millions of tokens per task. <strong>One Arxiv study found 59.4% of all tokens in multi-agent software engineering went to iterative code review alone.</strong></div>
+  </div>
+  <div class="callout-box" style="margin-top:24px;">
+    <p>The same underlying question, asked three different ways, can vary by 50 to 100× in token cost. Choosing the workflow tier is a cost decision, not just a quality decision.</p>
+  </div>
+  <div class="cite">
+    <span class="sources">Arxiv 2605.09104 (multi-agent software engineering) · Mavik Labs 2026</span>
+    <span class="slide-num">10 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 11: ROUTE + CACHE -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="tag">The winning play</div>
+  <h2 style="font-size:32px;">The teams that win on AI cost over the next 12 months are those who <span class="em">route intelligently</span> and <span class="em">cache aggressively</span>.</h2>
+  <div class="cols-2" style="margin-top:18px;">
+    <div class="panel-box">
+      <div class="panel-tag">Route</div>
+      <h3>Send the right query to the right model</h3>
+      <p style="font-size:14.5px; line-height:1.55;">Most enterprise traffic does not need a frontier model. A simple classifier or rule routes routine queries to Haiku or a budget model and escalates only when reasoning depth requires it.</p>
+      <ul style="margin-top:12px; font-size:13.5px; padding-left:18px; line-height:1.55;">
+        <li>80% of typical traffic can run on budget models with no measurable quality loss</li>
+        <li>Documented 47-80% spend reduction in production environments</li>
+        <li>Cheapest implementation: tag your tasks by type, hard-code the model mapping</li>
+      </ul>
+    </div>
+    <div class="panel-box">
+      <div class="panel-tag">Cache · what it actually is</div>
+      <h3>Stop paying to re-read the same content</h3>
+      <p style="font-size:14.5px; line-height:1.55;">Prompt caching stores the model's internal computation of a repeated prefix (system prompt, document, instructions). The next call reuses it. The model still sees the prefix; you pay a fraction.</p>
+      <ul style="margin-top:12px; font-size:13.5px; padding-left:18px; line-height:1.55;">
+        <li><strong>OpenAI:</strong> automatic for prompts ≥1,024 tokens. 50% off cached input.</li>
+        <li><strong>Anthropic:</strong> explicit cache_control. Read at 10% of input rate.</li>
+        <li><strong>Google:</strong> explicit caching. Read at $0.20/M vs $1.25/M standard.</li>
+        <li>Production research: 41-90% reduction on input-token cost from caching alone</li>
+      </ul>
+    </div>
+  </div>
+  <p class="kicker">Routing without caching captures 60-70% of the prize. Caching without routing captures 40-60%. The two stacked, with batch on top, hits the 80-95% reductions documented in production.</p>
+  <div class="cite">
+    <span class="sources">Anthropic / OpenAI / Google caching docs · Arxiv 2601.06007 (peer-reviewed caching results)</span>
+    <span class="slide-num">11 / 12</span>
+  </div>
+</section>
+
+<!-- SLIDE 12: CLAUDE NEAR-TERM (CONCLUSION) -->
+<section class="slide">
+  <div class="top-bar"></div>
+  <div class="tag">In conclusion · what's coming</div>
+  <h2>Claude pricing: confirmed near-term changes, May 2026.</h2>
+  <div class="cols-2" style="margin-top:16px;">
+    <div>
+      <div class="panel-tag" style="font-size:10.5px; letter-spacing:0.22em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:8px;">For individuals · capacity up, list prices unchanged</div>
+      <ul class="bullets" style="margin-top:0;">
+        <li><strong>Claude Code rate limits doubled</strong> for Pro, Max, Team, and Enterprise plans.</li>
+        <li><strong>Peak-hours degradation removed</strong> for Pro and Max accounts.</li>
+        <li><strong>API rates unchanged</strong> for Opus, Sonnet, Haiku at time of review.</li>
+        <li>Net effect: more useful work per subscription this quarter, no per-token cost change.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="panel-tag" style="font-size:10.5px; letter-spacing:0.22em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:8px;">For enterprise · pricing restructured</div>
+      <ul class="bullets" style="margin-top:0;">
+        <li><strong>Moving to a seat-plus-consumption model.</strong></li>
+        <li><strong>Lower headline seat prices,</strong> but explicit token-usage commitments attached.</li>
+        <li>For organisations with variable demand, this can <strong>increase effective cost and reduce flexibility</strong>.</li>
+        <li>Anthropic is monetising the enterprise channel more aggressively as IPO pressure rises.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout-box" style="margin-top:24px;">
+    <p>Subscription users gain headroom this quarter. Enterprise procurement gets harder. Plan accordingly: the rules in this deck need to become habit before the next pricing cycle, not after.</p>
+  </div>
+  <div class="cite">
+    <span class="sources">Anthropic May 2026 release notes · Perplexity research summary on Anthropic enterprise pricing changes</span>
+    <span class="slide-num">12 / 12</span>
+  </div>
+</section>
+
+</div>
+
+<div class="nav">
+  <button onclick="prev()">← Prev</button>
+  <span class="counter" id="counter">1 / 12</span>
+  <button onclick="next()">Next →</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const counter = document.getElementById('counter');
+let current = 0;
+
+function show(n) {
+  slides[current].classList.remove('active');
+  current = Math.max(0, Math.min(slides.length - 1, n));
+  slides[current].classList.add('active');
+  counter.textContent = `${current + 1} / ${slides.length}`;
+}
+
+function next() { show(current + 1); }
+function prev() { show(current - 1); }
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); show(0); }
+  if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+});
+
+document.querySelector('.deck').addEventListener('click', (e) => {
+  if (e.target.closest('.nav')) return;
+  const rect = document.querySelector('.deck').getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x > rect.width / 2) next();
+  else prev();
+});
+</script>
+
+</body>
+</html>
