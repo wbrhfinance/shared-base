@@ -1,0 +1,6 @@
+# machine-local files must never enter the repo
+bin/
+*.log
+last-status.txt
+Thumbs.db
+.DS_Store

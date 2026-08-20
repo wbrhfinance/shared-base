@@ -1,0 +1,55 @@
+{
+  "comment": "Single source of truth for C:\\Code sync on ALL machines. Edit here, commit, and every machine picks it up on its next run. mode: 'sync' = auto-commit + pull --rebase + push (knowledge repos). mode: 'pull' = fast-forward only, never touches local edits (code repos).",
+  "repos": [
+    {
+      "path": "shared-base",
+      "url": "https://github.com/wbrhfinance/shared-base.git",
+      "mode": "sync"
+    },
+    {
+      "path": "cape/cape-toolbox",
+      "url": "https://github.com/Cape-Capital/Cape-Toolbox.git",
+      "mode": "sync"
+    },
+    {
+      "path": "brh/brh-toolbox",
+      "url": "https://github.com/wbrhfinance/brh-toolbox.git",
+      "mode": "sync"
+    },
+    {
+      "path": "cape/cape_blank",
+      "url": null,
+      "candidates": [
+        "https://github.com/Cape-Capital/cape_blank.git",
+        "https://github.com/Cape-Capital/cape-framework.git"
+      ],
+      "mode": "pull",
+      "note": "Old CapeCapitalDev org is dead. bootstrap.ps1 probes the candidates and fills in url automatically."
+    },
+    {
+      "path": "cape/Moonshot",
+      "url": null,
+      "candidates": [
+        "https://github.com/Cape-Capital/Moonshot.git",
+        "https://github.com/Cape-Capital/cape-moonshots.git"
+      ],
+      "mode": "pull",
+      "note": "Old CapeCapitalDev org is dead. bootstrap.ps1 probes the candidates and fills in url automatically."
+    },
+    {
+      "path": "brh/wbr-market-dashboard",
+      "url": "https://github.com/wbrhfinance/wbr-market-dashboard.git",
+      "mode": "pull"
+    },
+    {
+      "path": "brh/brh-finance-website",
+      "url": "https://github.com/wbrhfinance/brh-finance-website.git",
+      "mode": "pull"
+    },
+    {
+      "path": "brh/brh-finance-february",
+      "url": "https://github.com/wbrhfinance/brh-finance-february.git",
+      "mode": "pull"
+    }
+  ]
+}
