@@ -1,32 +1,38 @@
 ---
 name: dual-engine-research
 description: >
-  Dual-Engine Research v1.1. Orchestrates topic research across two
-  complementary engines: Perplexity (breadth, recency, citation density)
-  and ChatGPT Deep Research (depth, reasoning, structural analysis).
-  Takes a topic, timeframe, and initial angle from the user, produces
-  two purpose-built prompts designed to return non-overlapping outputs,
-  then synthesises the returned material into a single explanatory
-  brief. Analytical and educational use only: explain a topic, map its
-  dynamics, surface the angles. Not for investment-committee work; use a
-  separate SKILL for that. Load when the user wants structured
-  intelligence on any topic.
+  Multi-Engine Research v2.0 (formerly Dual-Engine Research). Orchestrates
+  topic research across four engines: ChatGPT (structural reasoning),
+  Perplexity (breadth, recency, citations, run on a non-OpenAI model),
+  Grok (real-time X-platform pulse), and Quartr (company- and sector-level
+  primary evidence, gated on investment aspect). Claude asks a five-field
+  intake, builds one tailored prompt per engine, runs each engine directly
+  in the user's own authenticated browser sessions via Claude in Chrome,
+  collects the outputs, and produces a long and a short synthesis with no
+  repetition. Saves everything to a per-topic folder under Cape Capital's
+  Themes directory. Analytical and educational register: explain a topic,
+  map its dynamics, surface the angles. Load when William wants structured,
+  multi-source intelligence on a topic.
 owner: William Bowdler-Raynar
 firm: shared
-version: 1.1.0
+version: 2.0.0
 status: draft
 agnostic: true
 created: '2026-05-26'
-last_updated: '2026-05-26'
+last_updated: '2026-08-12'
 last_used:
 usage_count: 0
 ---
 
-# Dual-Engine Research v1.1
+# Multi-Engine Research v2.0
 
-A lightweight research orchestration SKILL. Two engines, three steps, one synthesis. Topic-agnostic, analytical register only. No theme lock-in, no scoring rubric, no schema overhead. Designed for the way William actually works: research a topic in depth using two complementary LLM tools, then collapse the output into something usable.
+*(formerly "Dual-Engine Research" — kept the same skill name for continuity; the pattern has grown from two engines to four.)*
 
-The goal is intelligence on a topic: explain it, map the dynamics, surface the angles. Not a decision document.
+Four engines, one intake, one execution pass, one synthesis. Topic-agnostic, analytical register only. Designed for the way William actually works: research a topic using several complementary tools, then collapse everything into something short enough to act on.
+
+The goal is intelligence on a topic: explain it, map the dynamics, surface the angles, and — only when asked — name the companies exposed to it. Not a decision document on its own.
+
+The big change from v1: Claude no longer hands the user two prompts to paste into separate browser tabs and waits for pasted-back output. Claude now drives the browser sessions directly (Claude in Chrome), submits the prompts itself into the user's already-logged-in ChatGPT, Perplexity, Grok, and Quartr accounts, reads the responses back, and writes the files. The user does the intake and the review; Claude does the running-around.
 
 ---
 
@@ -34,328 +40,415 @@ The goal is intelligence on a topic: explain it, map the dynamics, surface the a
 
 Load when William wants to:
 
-- Understand a new topic from a cold start (technical, conceptual, market structure, policy, anything).
+- Understand a new topic from a cold start (technical, conceptual, market structure, policy, thematic).
 - Map the dynamics of an area before committing time to deeper work.
-- Produce a structured explainer with sources for a memo, a meeting, or for William's own reference.
+- Get a fast read on what's being said about a topic on X, alongside the structured research.
+- Check whether specific listed companies have real exposure to a topic, backed by their own filings and earnings calls.
+- Produce a structured explainer, long and short, for a memo, a meeting, or his own reference — filed under Cape Capital's Themes.
 
 Do NOT load for:
 
-- Investment-committee or thesis work (use the dedicated investment SKILL).
+- Full investment-committee thesis work with a scored rubric (use the dedicated investment SKILL).
 - Cape Moonshot research (use `cape-moonshot-research-playbook`).
 - Quick factual lookups (just answer directly).
 - Coding or technical-build tasks (wrong tool).
 
 ---
 
-## 2. THE THREE STEPS
+## 2. THE FOUR STEPS
 
 ```
-1. INTAKE        →  Clarify topic, timeframe, angle.
-2. PROMPT BUILD  →  Generate one Perplexity prompt and one ChatGPT
-                    Deep Research prompt. Engines do different work;
-                    prompts enforce the split.
-3. SYNTHESIS     →  Take both returned outputs. Cross-reference, surface
-                    conflicts, distinguish fact / consensus / signal,
-                    produce one structured explainer.
+1. INTAKE      →  Five fields: topic, context, core question, time period,
+                  investment aspect (companies in or out).
+2. PROMPT BUILD →  One tailored prompt per engine in play. No two engines
+                  asked the same question the same way.
+3. EXECUTION    →  Claude runs every prompt directly in the user's own
+                  logged-in browser sessions, reads back the output,
+                  saves each as a raw file.
+4. SYNTHESIS    →  Cross-reference everything collected. Surface
+                  agreement, conflict, and social-media noise separately.
+                  Produce a long and a short brief. Save both, plus the
+                  raw outputs, to the topic's folder.
 ```
-
-User runs the two prompts in their own browser sessions and pastes the outputs back. Claude does Step 1, Step 2, and Step 3.
 
 ---
 
 ## 3. STEP 1 — INTAKE
 
-The user provides, or is asked for, three fields:
+Ask for all five fields in a single message. One clarification round if something is missing or too vague to build prompts from — never a list of follow-up questions across multiple turns.
 
-1. **Topic** — what is being researched. As specific as possible. "LLM token pricing models across providers" is better than "tokens".
-2. **Timeframe** — current state only, or current + forward look. If forward, how far (12 months, 3 years, 5 years).
-3. **Angle** — 1–3 bullets on what the user wants to understand, what they don't know yet, or what they suspect. Can be "I don't have one yet, explain it to me".
+1. **Topic** — what is being researched, as specific as possible. "Tungsten supply chain and China export controls" beats "tungsten".
+2. **Context** — why this matters right now. What prompted the question, what William already knows, what he's reacting to.
+3. **Core question** — the single question this research needs to answer. Not "explain tungsten" but "does the China export-control tightening create an investable supply squeeze, and for how long."
+4. **Time period** — the look-back cutoff (how far back is still relevant, e.g. "nothing before 2023 export-control regime") and the forward horizon if any (12 months, 3 years).
+5. **Investment aspect** — include companies as an output at this stage, yes or no. This single answer gates Quartr (§4.5) and whether the ChatGPT/Perplexity prompts are told to surface named listed players.
 
-If any of the three is missing or so vague the prompts can't be built, ask once. One clarification round, not a list. Otherwise proceed straight to Step 2.
+If investment aspect is "yes" but William already has specific tickers in mind, capture them now — it saves a round trip before Quartr can run.
 
 ---
 
 ## 4. STEP 2 — PROMPT BUILD
 
-Two prompts. Each engine gets the work it's actually good at. No overlap by design; overlap is wasted budget.
+Each engine gets the work it is actually good at. No two prompts ask the same question in different words; overlap is wasted budget and wasted synthesis effort.
 
 ### 4.1 Division of labour
 
-| Engine | Best at | Assigned scope |
-|---|---|---|
-| **Perplexity** | Live web, citation density, named sources, recent data points, current pricing / specs, who-said-what | Current state. Named players. Numbers with sources. Recent developments. The "what is happening right now" layer. |
-| **ChatGPT Deep Research** | Multi-step reasoning, structural analysis, mechanism walk-through, comparing approaches, forward view | Structural. How the thing works. Why it is shaped the way it is. Trade-offs between approaches. What could change. The "why and what next" layer. |
+| Engine | Best at | Assigned scope | Always run? |
+|---|---|---|---|
+| **ChatGPT** | Multi-step reasoning, structural analysis, mechanism walk-through, forward view | Structural. How the thing works, why it's shaped that way, trade-offs, what could change. | Yes |
+| **Perplexity** | Live web, citation density, named sources, recent data points | Current state. Named players, numbers with sources, recent developments. Must be run on a non-OpenAI model — see §4.3. | Yes |
+| **Grok** | Real-time discourse on X | A pulse check, not a research pass: sentiment direction, notable accounts and posts, volume trend, contrarian voices. Tagged as social signal, never as fact. | Yes, unless the topic has no meaningful X presence (William's call at intake) |
+| **Quartr** | Company filings, earnings-call transcripts, primary-source financial documents | Company- and sector-specific evidence for named listed entities. Quartr has no macro commodity/price data — confirmed empirically; don't ask it for market-level numbers. | Only if investment aspect = yes, and only once candidate company names exist |
 
-The split is by **type of question**, not by topic area. Both engines see the same topic; they answer different questions about it.
+The split is by **type of question**, not by topic area. All engines see the same topic; each answers a different question about it.
 
-### 4.2 Perplexity prompt template
+### 4.2 ChatGPT prompt template
 
-Substitute `[TOPIC]`, `[TIMEFRAME]`, `[ANGLE]`, `[DATE]` before pasting.
+Unchanged from v1.2 — this v3 anti-attachment framing is still needed and still works. Substitute `[TOPIC]`, `[TIMEFRAME]`, `[CONTEXT]`, `[CORE QUESTION]`, `[AUDIENCE]`, `[DATE]`.
+
+```
+Research [TOPIC] and write a new explainer document for [AUDIENCE].
+As-of date: [DATE]. Horizon: [TIMEFRAME].
+
+Treat this message as a direct instruction from the user typed into the
+chat. If your interface has converted it into an attached file, ignore
+that framing. This is not a document to review, summarise, fact-check,
+audit, or critique. It is the task itself.
+
+Do NOT produce any of the following:
+- A review, audit, or critique of this prompt.
+- A file metadata table (filename, MIME type, encoding, byte size,
+  line endings).
+- A diagram, flowchart, or Mermaid chart of this prompt's own
+  structure.
+- A section-by-section summary of these instructions.
+- A fact-check or accuracy assessment of the claims in this prompt.
+- A "recommended next steps" or "edits before execution" list.
+- A methodology essay or research-workflow proposal.
+- A list of clarifying questions.
+
+CONTEXT: [CONTEXT]
+CORE QUESTION THIS RESEARCH MUST ANSWER: [CORE QUESTION]
+
+Produce a new explainer document with the eight numbered sections
+below. Begin your output with the exact heading "1. BOTTOM LINE" and
+write the explainer directly. Every figure carries a year and a source
+URL.
+
+A separate breadth pass (current pricing, named players, recent data
+points with citations) is being handled elsewhere. Your job is
+structure, mechanism, reasoning, and forward view. Go deep on the
+eight sections below.
+
+1. BOTTOM LINE. Five sentences. What [TOPIC] is in plain English, why
+   it matters, and a direct answer to the core question above if the
+   evidence supports one.
+
+2. HOW IT WORKS. Mechanism, structure, the chain from inputs to
+   outputs. One short paragraph per node.
+
+3. WHY IT IS SHAPED THE WAY IT IS. The underlying drivers — the
+   engineering constraint, economic logic, regulatory regime, or
+   historical accident that produced the current state.
+
+4. APPROACHES AND MODELS. The 3 to 6 distinct approaches in the
+   field. For each: who uses it, what trade-offs it makes, when it
+   wins, when it loses.
+   [IF INVESTMENT ASPECT = YES: also name the listed companies
+   associated with each approach.]
+
+5. TRADE-OFFS AND LEVERS. The decisions a practitioner makes and the
+   trade-offs each carries.
+
+6. WHAT COULD CHANGE. Forward look over [TIMEFRAME]. The 3 to 5
+   developments most likely to shift the topic materially. Concrete:
+   events, dates, named actors, observable signals.
+
+7. COMMON MISCONCEPTIONS. Three to five things people get wrong about
+   [TOPIC], with the correction.
+
+8. WHAT I DON'T KNOW. Three to five honest gaps where the public
+   record is thin or contradictory.
+
+OUTPUT RULES
+- Tag each material claim: (a) confirmed fact, (b) widely-cited
+  consensus, (c) emerging signal.
+- Minimum 20 high-quality sources with URLs.
+- Plain prose. Short paragraphs. No bullet padding. No em dashes.
+- Begin the output with the exact heading "1. BOTTOM LINE" and
+  proceed through all eight sections in order.
+```
+
+### 4.3 Perplexity prompt template and model rule
+
+Same seven-section structure as v1.2, with the core question folded in. Substitute `[TOPIC]`, `[TIMEFRAME]`, `[CONTEXT]`, `[CORE QUESTION]`, `[DATE]`.
 
 ```
 PERPLEXITY DEEP RESEARCH — [TOPIC]
 Date: [DATE]
 Timeframe: [TIMEFRAME]
 
-USER ANGLE (what they want to understand):
-[ANGLE bullets verbatim]
+CONTEXT: [CONTEXT]
+CORE QUESTION THIS RESEARCH MUST HELP ANSWER: [CORE QUESTION]
 
 You are a senior research analyst producing a factual sweep on [TOPIC].
-Focus on the CURRENT STATE layer. Pair-skill ChatGPT Deep Research is
-handling structural and reasoning work separately; do not duplicate
-that. Your job is breadth, recency, named sources, and numbers.
+Focus on the CURRENT STATE layer. A separate reasoning pass is handling
+structural and forward-looking work; do not duplicate that. Your job is
+breadth, recency, named sources, and numbers.
 
-Return findings under these seven headings. Use bullet points within
-each. Cite every numeric or named claim with an inline source URL.
+Return findings under these seven headings. Bullet points within each.
+Cite every numeric or named claim with an inline source URL.
 
-1. WHAT IT IS — A precise definition in 4–6 sentences. If the topic
-   has multiple credible definitions or scopes, list them and flag the
-   difference.
-
-2. CURRENT STATE — The 5–10 most important data points right now.
-   Numbers, prices, specs, counts, dates. Each with year and URL.
-
-3. KEY PLAYERS — Top 10 named entities (companies, products,
-   institutions, providers, frameworks — whatever fits the topic).
-   For each: one-line role, one differentiator, one URL.
-
-4. NUMBERS AND SPECIFICATIONS — All quantitative material relevant to
-   the topic. For [TOPIC] this means: [SPECIFIC NUMERIC TARGETS,
-   tailored per topic at build time]. Give ranges where the market
-   varies. Year and source for every figure.
-
-5. RECENT DEVELOPMENTS (last 90 days) — Material news, launches,
-   policy moves, price changes, technical releases. Date + one-line
-   + URL.
-
-6. NARRATIVE — How is this topic being discussed in credible press,
-   provider docs, and practitioner communities right now? Building,
-   fading, contested, consensus? 3–5 sentences with representative
-   source URLs.
-
-7. OPEN QUESTIONS — Three to five questions where the public record
-   is thin, contradictory, or absent. These will be passed to the
-   reasoning engine.
+1. WHAT IT IS — Precise definition, 4-6 sentences.
+2. CURRENT STATE — 5-10 most important data points right now, each
+   with year and URL.
+3. KEY PLAYERS — Top 10 named entities. One-line role, one
+   differentiator, one URL each.
+   [IF INVESTMENT ASPECT = YES: flag which are publicly listed and
+   their ticker.]
+4. NUMBERS AND SPECIFICATIONS — [SPECIFIC NUMERIC TARGETS, tailored
+   per topic]. Ranges where the market varies. Year and source for
+   every figure.
+5. RECENT DEVELOPMENTS (last 90 days) — date + one line + URL each.
+6. NARRATIVE — How is this being discussed in credible press and
+   practitioner communities right now? 3-5 sentences with sources.
+7. OPEN QUESTIONS — 3-5 questions where the public record is thin or
+   contradictory.
 
 SOURCE STANDARDS
-- Tier 1: primary documents (provider docs, official spec pages,
-  regulatory filings, company disclosures, pricing pages),
+- Tier 1: primary documents, regulatory filings, company disclosures,
   peer-reviewed, top trade press.
-- Tier 2: established analyst and consulting houses (McKinsey, BCG,
-  Gartner, IDC), tier-1 financial and tech press.
-- Tier 3: practitioner blogs, industry forums, Substack — useful for
-  recency but tag as such.
+- Tier 2: established analyst/consulting houses, tier-1 financial and
+  tech press.
+- Tier 3: practitioner blogs, forums — useful for recency, tag as such.
 - Aim for 15+ distinct sources. No single source anchors more than
-  three claims.
-- Where two reputable sources disagree, show both with the
-  disagreement explicit.
+  three claims. Where two reputable sources disagree, show both.
 
 OUTPUT RULES
-- Distinguish: (a) confirmed fact, (b) widely-cited consensus, (c)
-  emerging signal. Tag each material claim.
+- Tag each claim: (a) confirmed fact, (b) widely-cited consensus,
+  (c) emerging signal.
 - No essay prose. Headings, bullets, citations.
-- If a figure is not available, write "UNKNOWN — public record thin"
-  rather than inventing or estimating.
+- If a figure is unavailable, write "UNKNOWN — public record thin"
+  rather than estimating.
 - Plain English. No em dashes.
-
-Save as: Perplexity_[TOPIC short].txt
 ```
 
-### 4.3 ChatGPT Deep Research prompt template
+**Model rule — non-negotiable.** Before submitting, set Perplexity's model selector to a non-OpenAI model. Perplexity's own default ("Best" / Sonar) is fine; Claude or Gemini also fine if offered. Never GPT-5, GPT-4o, o-series, or any other OpenAI-branded option. The point of running two engines is to get a second, independently-reasoned pass — if Perplexity is quietly answering on the same OpenAI model as ChatGPT, that independence is gone. Check the model dropdown every run; don't assume it held from last time.
 
-This template applies the v2 fix from the Cape playbook: lead with an imperative verb, drop meta-framing, end with an explicit "do not produce a methodology essay" guard. Deep Research will otherwise return a workflow document instead of research.
+### 4.4 Grok prompt template — X-platform pulse
+
+New in v2.0. This is deliberately lighter than the other two. Grok's contribution is a social-signal snapshot, not a research deliverable — treat it that way at intake and at synthesis.
 
 ```
-Conduct deep research on [TOPIC] and produce a structured explainer as
-of [DATE]. Horizon: [TIMEFRAME].
+Quick pulse check on [TOPIC] — what's actually being discussed on X
+right now, not a full research report.
 
-USER ANGLE (what they want to understand):
-[ANGLE bullets verbatim]
+CONTEXT: [CONTEXT]
 
-Pair-skill Perplexity is handling current-state, named-source, numeric
-breadth separately. Your job is structure, reasoning, mechanism, and
-forward view. Do not duplicate breadth work; go deeper on the layers
-below.
+Give me:
+1. Overall sentiment direction (bullish / bearish / neutral / sharply
+   contested) and roughly how strong.
+2. The 3-5 most notable accounts or posts driving the conversation,
+   with a one-line summary of each position.
+3. Whether volume/attention on this topic is rising, falling, or flat
+   over the last 1-2 weeks.
+4. Any contrarian or minority view getting real traction, even if it's
+   a small share of voice.
 
-Produce these eight sections in order. Every figure carries a year and
-a source URL.
-
-1. BOTTOM LINE (5 sentences). What [TOPIC] is in plain English, why
-   it matters, and the single most important thing someone learning
-   this should understand.
-
-2. HOW IT WORKS — Mechanism, structure, the chain from inputs to
-   outputs. One short paragraph per node. If there are competing
-   technical or conceptual models, lay them out.
-
-3. WHY IT IS SHAPED THE WAY IT IS — The underlying drivers. The
-   engineering constraint, economic logic, regulatory regime, or
-   historical accident that produced the current state. The thing
-   that, if it changed, would change everything else.
-
-4. APPROACHES AND MODELS — The 3–6 distinct approaches in the field.
-   For each: who uses it, what trade-offs it makes, when it wins, when
-   it loses. Compare on the single dimension that matters most to
-   someone trying to understand the topic.
-
-5. TRADE-OFFS AND LEVERS — The decisions a practitioner makes within
-   this topic and the trade-offs each one carries. For cost-sensitive
-   topics: how to reduce cost and what is lost in doing so. For
-   performance-sensitive topics: how to increase performance and what
-   is paid for it. For policy topics: the levers regulators have and
-   the second-order effects.
-
-6. WHAT COULD CHANGE — Forward look over [TIMEFRAME]. The 3–5
-   developments most likely to shift the topic materially. Be
-   concrete: events, dates, named actors, observable signals.
-
-7. COMMON MISCONCEPTIONS — Three to five things people get wrong about
-   [TOPIC], with the correction and why the misconception persists.
-
-8. WHAT I DON'T KNOW — Three to five honest gaps where the public
-   record is thin or contradictory. Pair-skill Perplexity is asked
-   the same question; the union of both sets the next research
-   agenda.
-
-OUTPUT RULES
-- Distinguish: (a) confirmed fact, (b) widely-cited consensus, (c)
-  emerging signal. Tag each material claim.
-- Minimum 20 high-quality sources with URLs.
-- Where sources conflict, surface the conflict and which view you
-  lean toward, with reasoning.
-- Plain prose. Short paragraphs. No bullet padding. No em dashes.
-- Do not produce a methodology essay, a "how to research this topic"
-  document, a workflow proposal, or a list of clarifying questions.
-  Execute the research above and produce the eight-section
-  deliverable.
-
-Save as: ChatGPT_[TOPIC short].txt or .docx
+Keep it short. This is a sentiment snapshot, not an explainer — no
+citations to formal sources needed, just what's actually on the
+platform.
 ```
 
-### 4.4 Per-topic tailoring
+### 4.5 Quartr prompt template — company evidence
 
-Before pasting the prompts to the user, Claude tailors three lines:
+New in v2.0. Only run if investment aspect = yes. Requires named companies — either supplied by William at intake, or surfaced by the ChatGPT/Perplexity passes first (in which case run Quartr as a second wave, after those two return).
 
-1. **Section 4 of the Perplexity prompt** ("NUMBERS AND SPECIFICATIONS") — replace `[SPECIFIC NUMERIC TARGETS]` with the figures actually relevant to the topic. For LLM token pricing: input price per million tokens, output price per million tokens, context window size, free-tier limits, subscription tiers and inclusions. For a different topic, different targets.
-2. **Section 4 of the ChatGPT prompt** ("APPROACHES AND MODELS") — if the topic has obvious categories (e.g. for LLM pricing: subscription / pay-as-you-go / hybrid / free with limits / self-hosted), seed them as the starting set.
-3. **Section 6 of the ChatGPT prompt** ("WHAT COULD CHANGE") — pre-seed with known forward developments if any are obvious (e.g. for LLM tokens: model efficiency curves, open-source displacement, prompt caching, regulatory pricing pressure).
+Do not ask Quartr for macro commodity, price, or market-size data — confirmed empirically that it doesn't hold this and will correctly decline. Ask it about companies by name.
+
+```
+For [COMPANY NAME(S)], pull the most recent earnings-call commentary,
+management guidance, and filings that touch on [TOPIC].
+
+Specifically:
+1. Has management discussed [TOPIC] on recent calls? Direct quotes
+   where possible, with call date.
+2. What guidance or forward commentary exists on exposure to [TOPIC]
+   (revenue exposure, cost exposure, strategic response)?
+3. Any filing disclosures (risk factors, segment reporting) that
+   quantify the exposure?
+
+If a named company has no material disclosed exposure, say so plainly
+rather than stretching a tangential mention.
+```
+
+If Quartr's first response declines because the topic is too macro (as it will for anything without a company name attached), that is not a failure — it is Quartr correctly staying in its lane. Feed it names, not markets.
+
+### 4.6 Per-topic tailoring
+
+Before running the prompts, Claude tailors:
+
+1. **Perplexity §4** — replace `[SPECIFIC NUMERIC TARGETS]` with the figures actually relevant to the topic.
+2. **ChatGPT `[AUDIENCE]`** — usually "William, a family-office / wealth-management professional" unless a different audience is stated.
+3. **ChatGPT §4** — seed the 3-6 approach categories if the topic has obvious ones.
+4. **ChatGPT §6** — pre-seed known forward developments if any are obvious.
+5. **Quartr company list** — from intake if supplied, otherwise pulled from the Perplexity/ChatGPT "key players" sections once those return.
 
 Tailoring is light. The prompts work without it; tailoring makes them sharper.
 
 ---
 
-## 5. STEP 3 — SYNTHESIS
+## 5. STEP 3 — EXECUTION (Claude runs it directly)
 
-User pastes both outputs back. Claude produces a single brief.
+This replaces v1's "user pastes outputs back." Claude now has Claude in Chrome access to the user's own logged-in sessions and runs the pipeline end to end.
 
-### 5.1 Synthesis structure
-
-```
-1. BOTTOM LINE (5 sentences max)
-   What [TOPIC] is. Why it matters. The one thing that matters most
-   for understanding it.
-
-2. WHAT BOTH ENGINES AGREE ON
-   The convergent core. High confidence. Brief.
-
-3. WHERE THEY DISAGREE (or where one has it and the other doesn't)
-   The real signal. Surface every meaningful conflict. For each:
-   - What Perplexity returned
-   - What ChatGPT returned
-   - Which is more credible and why (source quality, recency,
-     methodology)
-   - Whether the gap can be resolved, or needs a third source
-
-4. HOW IT WORKS
-   The mechanism, grounded in named players and numbers. Pull the
-   structural walk-through from ChatGPT, anchor it with the current
-   data points from Perplexity. Three to six short paragraphs.
-
-5. THE LANDSCAPE
-   Key players, approaches, numbers. Compressed map of who does what,
-   how it differs, and what it costs or delivers.
-
-6. DYNAMICS AND TRADE-OFFS
-   The levers and the trade-offs each one carries. What a practitioner
-   or observer should pay attention to.
-
-7. FORWARD VIEW
-   What changes over [TIMEFRAME]. Concrete signals, named events,
-   observable triggers. No vague "watch this space".
-
-8. MISCONCEPTIONS AND OPEN QUESTIONS
-   What people get wrong, plus the union of both engines' "what I
-   don't know" sections. Open questions ranked by how much they
-   matter for understanding the topic.
-
-9. SOURCES
-   Combined list. Tier 1 first. One-line description per source and
-   which section it informed.
-```
-
-### 5.2 Synthesis discipline
-
-For every claim in the brief:
-
-1. **Cross-reference both engines.** If they agree, state the value with the stronger primary source.
-2. **If they disagree, surface the conflict.** Pick the more credible value, note the alternative.
-3. **Tag the basis.** Confirmed fact / widely-cited consensus / emerging signal.
-4. **Apply William's style.** Plain English, direct verbs, no em dashes, no banned phrases (meticulous, navigating complexities, realm, towards, robust, ever-evolving, daunting, in the heart of, when it comes to, etc. — full list in `00-shared-base.md`). Every sentence adds information.
-5. **Bottom line first.** Core signal early. Reasoning after.
-
-### 5.3 What synthesis is NOT
-
-- Not a re-paste of both engine outputs side by side. Claude does the work.
-- Not a balanced summary. Claude has a view on which engine is more credible per claim, and shows it.
-- Not vague. Numbers carry years and sources. "Around USD 20bn" without methodology is rejected.
-- Not padded. Five strong sentences beat fifteen weak ones.
+1. **Confirm the right account is live before running anything.** Check the visible plan/account indicator in each app's UI (sidebar, account menu) against what William expects. Flag any mismatch before running — don't silently proceed on the wrong tier or the wrong account. This happened once already (a Perplexity session came up on a free-plan account when William holds an Enterprise Pro subscription); a five-second screenshot check catches it.
+2. **Set Perplexity's model per §4.3 before submitting.**
+3. **Submit each prompt** in a fresh controlled tab. Run ChatGPT, Perplexity, and Grok in parallel (independent tabs); run Quartr second if it depends on names surfaced by the others.
+4. **Wait for completion, then extract the response.** For plain chat UIs (ChatGPT, Perplexity, Grok, Quartr) the response is regular page DOM — read it directly rather than relying on screenshots for the text itself. Screenshot only to confirm state (loading, finished, error).
+5. **Watch for the ChatGPT meta-failure** (file-review mode: a metadata table, a structural diagram of the prompt, a fact-check of the brief, an opening line like "The attachment is..."). If detected, re-run once automatically with the same v3 template rather than passing the failed output into synthesis.
+6. **Stop and ask, never click through, on any consent/ToS/login gate.** If an engine shows an updated Terms of Service, a cookie banner beyond the standard decline, or an OAuth/SSO prompt, pause and ask William — this happened with Grok's ToS update and is exactly the kind of action that needs his say, not an assumption.
+7. **Save each raw response** to `01 Output` in the topic folder (§6) before doing any synthesis work, so nothing is lost if a later step needs redoing.
 
 ---
 
-## 6. WORKED EXAMPLE — LLM tokens
+## 6. STEP 4 — SYNTHESIS AND FILING
 
-To make the pattern concrete, here is how the intake and prompt build would run for William's stated topic.
+### 6.1 Folder structure
 
-**Intake**
+Create, under `C:\Users\willi\OneDrive\Business\Cape Capital\Themes\`:
 
-- Topic: LLM tokens — what they are, how providers price them, the dominant pricing models (subscription / pay-as-you-go / hybrid / self-hosted), the forward path on price and efficiency, and practical levers to minimise token spend.
-- Timeframe: current state + 12-month forward look.
-- Angle: explain the topic end to end, map the dynamics across providers, surface where the cost levers actually sit.
+```
+<Topic name>/
+├── 01 Output/
+│   ├── ChatGPT_<topic short>.md
+│   ├── Perplexity_<topic short>.md
+│   ├── Grok_<topic short>.md
+│   └── Quartr_<company>_<topic short>.md   (one per company, if run)
+└── 02 Synthesize/
+    ├── <Topic> - Claude Summary (Long).md
+    └── <Topic> - Claude Summary (Short).md
+```
 
-**Tailoring**
+This matches the convention already in use across other Themes folders (Custodian Cyber Risk, Hair Loss Treatment).
 
-- Perplexity section 4 numeric targets: input price per million tokens (current rates across OpenAI, Anthropic, Google, Mistral, Meta-hosted, open-source self-hosted), output price per million tokens, context window in tokens, prompt-cache pricing where offered, batch / async pricing, subscription tier names and monthly cost (Plus, Pro, Team, Enterprise), free-tier rate limits.
-- ChatGPT section 4 seed categories: pay-per-token API, flat-rate subscription with quota, hybrid (subscription + overage), free with rate limits, self-hosted open-source.
-- ChatGPT section 6 forward seeds: model efficiency curves (smaller models hitting bigger-model quality), open-source displacement, prompt-caching adoption, batch / async pricing growth, regulatory pricing transparency pressure.
+### 6.2 Synthesis structure — Long version
 
-**Then** Claude pastes the two tailored prompts. William runs them. William pastes outputs back. Claude synthesises.
+```
+1. BOTTOM LINE (5 sentences max)
+   What the topic is, why it matters, and a direct answer to the core
+   question from intake if the evidence supports one.
+
+2. WHAT THE ENGINES AGREE ON
+   The convergent core across ChatGPT and Perplexity. High confidence.
+
+3. WHERE THEY DISAGREE
+   Every meaningful conflict between ChatGPT and Perplexity. For each:
+   what each said, which is more credible and why, whether the gap
+   resolves or needs a third source.
+
+4. HOW IT WORKS
+   Mechanism, grounded in named players and numbers. Structural
+   walk-through from ChatGPT, anchored with current data from
+   Perplexity.
+
+5. THE LANDSCAPE
+   Key players, approaches, numbers.
+
+6. DYNAMICS AND TRADE-OFFS
+   The levers and what each costs.
+
+7. FORWARD VIEW
+   What changes over the stated horizon. Concrete, named, dated.
+
+8. PLATFORM X PULSE (only if Grok ran)
+   Sentiment direction, notable voices, volume trend. Explicitly
+   tagged as social signal, not fact — never merged into sections 2-7.
+
+9. COMPANY EVIDENCE (only if investment aspect = yes and Quartr ran)
+   Named companies, what their own disclosures and calls actually say
+   about exposure to the topic. Flag where a company has no material
+   exposure despite surface-level association.
+
+10. MISCONCEPTIONS AND OPEN QUESTIONS
+    What people get wrong, plus the union of every engine's stated
+    gaps, ranked by how much each matters for the core question.
+
+11. SOURCES
+    Combined list, tier 1 first, one line each on what it informed.
+```
+
+### 6.3 Synthesis structure — Short version (max 1,000 words)
+
+No section numbering, no jargon, no repetition of the long version's structure. Write it as five to eight short paragraphs:
+
+- Direct answer to the core question, first sentence.
+- What's solid (both engines agree, well-sourced).
+- What's contested or uncertain, and why it matters.
+- The one or two things most likely to change this over the stated horizon.
+- If investment aspect = yes: the company-level read, one line per name, only where evidence actually supports a view.
+- What to do with this — one concrete, actionable line. Not "monitor the situation"; something William could actually act on or decide.
+
+Every sentence adds information. If a sentence could be deleted without losing anything, delete it.
+
+### 6.4 Synthesis discipline
+
+1. Cross-reference ChatGPT and Perplexity on every claim. Agreement → state with the stronger source. Disagreement → surface it, pick the more credible value, note the alternative.
+2. Grok's output never gets treated as fact. It answers "what's the mood," not "what's true." Keep it in its own section.
+3. Quartr's output is treated as primary evidence, weighted above secondary commentary from the other three, but only for the specific companies it covered — do not extrapolate a company's disclosed exposure onto the whole sector.
+4. Tag every material claim: confirmed fact / widely-cited consensus / emerging signal.
+5. Plain English, direct verbs, no em dashes, no banned phrases (meticulous, navigating complexities, realm, towards, underpins, ever-changing, ever-evolving, robust, daunting, in the heart of, when it comes to, amongst, unlock the secrets, not only, designed to enhance, it is advisable — full list in `00-shared-base.md`).
+6. Bottom line first, always.
+7. No repetition between the long and short versions in phrasing — the short version is a distinct, compressed pass, not a trimmed copy-paste of the long one's opening sections.
 
 ---
 
 ## 7. QUALITY CONTROL
 
 **Good output:**
-- Two prompts built, each with the right scope, no overlap, tailored to the topic.
-- Synthesis leads with bottom line, surfaces conflicts honestly, distinguishes fact / consensus / signal, ends with what to monitor.
-- Numbers carry years and URLs.
-- Voice matches William's style guide.
+- Four (or three, if Grok is skipped, or fewer if investment aspect = no) prompts built, each scoped to what that engine is actually good at, none overlapping.
+- Perplexity confirmed running on a non-OpenAI model before submission.
+- Account/plan mismatch checked and flagged before running, not after.
+- Any consent/ToS gate stopped on and asked about, never clicked through.
+- ChatGPT meta-failure caught and re-run automatically.
+- Long synthesis keeps Grok and Quartr in their own tagged sections, never blended into the fact layer.
+- Short synthesis under 1,000 words, no jargon, one actionable line.
+- Files land in the correct topic folder under Themes, in the `01 Output` / `02 Synthesize` structure.
 
 **Bad output:**
-- Two prompts that ask the same questions in different words.
-- Synthesis that is a both-sides summary with no view.
-- Vague conclusions, undated figures, missing sources.
-- Hedge words, banned phrases, em dashes.
-- More than one clarifying question at intake.
+- Two prompts asking the same question in different words.
+- Perplexity run on GPT-5 or another OpenAI model without noticing.
+- X sentiment presented as fact in the main synthesis.
+- Quartr asked for macro/commodity data instead of company evidence.
+- A ToS or login gate clicked through without asking.
+- Short version over 1,000 words, or just a shortened copy of the long version.
+- Files saved outside the topic folder, or the folder name doesn't match the topic.
+- Hedge words, banned phrases, em dashes, more than one clarification round at intake.
 
 ---
 
 ## 8. CHANGELOG
 
-**v1.1** (2026-05-26, draft)
-- Dropped the Comet framing — Perplexity is the engine, the browser is incidental.
-- Removed the Analytical / Investment register flag. SKILL is analytical and educational only; investment-committee work belongs to a separate SKILL.
-- Retuned both prompts to explain, map, and surface angles rather than support a decision. Renamed Perplexity §4 from "Pricing / Economics / Numbers" to "Numbers and Specifications". Replaced ChatGPT §5 ("How to act on it") with "Trade-offs and levers". Replaced ChatGPT §7 ("Bear case / disconfirming evidence") with "Common misconceptions".
-- Synthesis structure retuned: removed "practical takeaway" and "bear case" sections; added "Dynamics and trade-offs" and "Misconceptions and open questions".
+**v2.0** (2026-08-12)
+- Consolidated the two parallel copies of this skill (root `SKILL.md` v1.1 and `Single topic research/SKILL.md` v1.2) into one canonical file. The subfolder copy is superseded — see the pointer left in its place.
+- Expanded from two engines to four: added Grok (X-platform sentiment pulse) and Quartr (company/sector primary-source evidence, gated on investment aspect).
+- Replaced the three-field intake (topic / timeframe / angle) with a five-field intake (topic / context / core question / time period / investment aspect). Investment aspect gates Quartr and whether named companies are requested from the other engines.
+- Replaced the "user runs prompts in their own browser and pastes output back" execution model with direct execution: Claude runs every prompt itself via Claude in Chrome, in the user's already-authenticated sessions, and extracts the responses.
+- Added the Perplexity non-OpenAI-model rule as a hard execution step, not just a preference.
+- Added account/plan verification before running (learned from a live mismatch: a Perplexity session came up on a free-plan account when the subscription is Enterprise Pro).
+- Added the consent/ToS/login-gate stop rule (learned from Grok prompting an updated ToS acceptance mid-run).
+- Added a per-topic output-folder convention under Cape Capital's Themes directory (`01 Output` / `02 Synthesize`), matching the pattern already in use for other themes.
+- Synthesis now produces two files, long and short, instead of one brief. Short version capped at 1,000 words, no jargon, ends on one actionable line.
+- Retained the v1.2 ChatGPT v3 anti-attachment framing and meta-failure detection unchanged — still needed, still works.
 
-**v1.0** (2026-05-26, draft)
-- Initial build. Two-engine pattern (Perplexity / Comet + ChatGPT Deep Research). Three steps (intake / prompt build / synthesis). Topic-agnostic with Analytical / Investment register flag. Inherited the v2 ChatGPT prompt-framing fix from `cape-moonshot-research-playbook` v1.1 to prevent Deep Research returning a methodology essay.
+**v1.2** (2026-05-26, draft, superseded)
+- Hardened the ChatGPT Deep Research template against the attached-file failure mode (v3 framing: ignore-attachment line, forbidden-output list moved to top, no pair-skill meta talk, literal opening-heading anchor, no in-prompt "Save as").
+- Added `[AUDIENCE]` as an explicit tailoring slot.
+- Added meta-failure detection and re-run rule.
+
+**v1.1** (2026-05-26, draft, superseded)
+- Dropped the Comet framing. Removed the Analytical / Investment register flag — this SKILL stayed analytical/educational only until v2.0 added the gated investment-aspect field.
+- Retuned prompts and synthesis structure to explain and map rather than support a decision.
+
+**v1.0** (2026-05-26, draft, superseded)
+- Initial build. Two-engine pattern (Perplexity + ChatGPT Deep Research). Three steps. Topic-agnostic.
